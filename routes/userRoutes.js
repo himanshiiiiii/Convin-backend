@@ -7,9 +7,9 @@ const {jwtAuthMiddleware,generateToken}=require('../jwt');
 
 
 //create user route or signup
-router.post('/signup',async(req,res)=>{
-    try{
-      const data=req.body
+router.post('/signup', async (req, res) => {
+    try {
+        const data=req.body
       const newUser=new User(data);
   
       const response= await newUser.save();
@@ -26,42 +26,35 @@ router.post('/signup',async(req,res)=>{
   
       res.status(200).json({response:response,token:token});
   
-  }catch(e)
-  {
-      console.log(e);
-      res.status(500).json({error:"Internal server errror"})
-  }
-  })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
   
   
   //login route
-  router.post('/login',async(req,res)=>{
-      try{
-      //extract adharcardno &npassword from req.body
-      const {aadharCardNumber,password}=req.body;
-  
-      //find user by adharcardno
-      const user=await User.findOne({aadharCardNumber:aadharCardNumber});
-  
-      //if user doesnot exist or pass does not match return error
-      if(!user||(await bcrypt.compare(password,user.password))){
-          return res.status(401).json({error:'Invalid username or password'})
-      }
-      const payload={
-          id:user.id
-      }
-  
-      const token=generateToken(payload);
-  
-      console.log("Token is: ",token);
-      res.json({token})
-  
-  }
-      catch(err){
-          console.log(e);
-          res.status(500).json({error:"Internal server errror"})
-      }
-  })
+  router.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const user = await User.findOne({ email });
+
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return res.status(401).json({ error: 'Invalid username or password' });
+        }
+
+        const payload = { id: user.id };
+        const token = generateToken(payload);
+
+        res.json({ token });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 
 
 //retrieve user details
