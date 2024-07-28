@@ -5,6 +5,8 @@ const bcrypt=require('bcrypt');
 const Expense = require('../models/expense');
 const {jwtAuthMiddleware,generateToken}=require('../jwt');
 
+
+//create user route or signup
 router.post('/signup',async(req,res)=>{
     try{
       const data=req.body
@@ -60,20 +62,6 @@ router.post('/signup',async(req,res)=>{
           res.status(500).json({error:"Internal server errror"})
       }
   })
-
-//create user route
-router.post('/',async(req,res)=>{
-    try{
-        const user=new User(req.body);
-        await user.save();
-        res.status(201).json({user:user})
-
-    }catch(e)
-    {
-    console.log(e);
-    res.status(500).json({error:"Internal server errror"})
-    }
-})
 
 
 //retrieve user details
